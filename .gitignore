@@ -1,0 +1,42 @@
+# Binarios y ejecutables
+*.exe
+*.dll
+*.so
+*.dylib
+bin/
+build/
+
+# Base de datos SQLite
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+
+# Archivos de entorno
+.env
+.env.local
+.env.*.local
+
+# Backups
+backups/
+*.backup
+*.sqlite.backup
+
+# Logs
+*.log
+ERROR-LOG.md
+
+# Dependencias y caché
+vendor/
+go.sum.tmp
+*.test
+*.out
+
+# IDE y OS
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
