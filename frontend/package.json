@@ -1,0 +1,84 @@
+{
+  "name": "integritypos-desktop",
+  "private": true,
+  "version": "1.0.0",
+  "description": "IntegrityPOS - Punto de Venta Local-First con Electron",
+  "main": "main.js",
+  "scripts": {
+    "dev:vite": "vite",
+    "dev:electron": "electron .",
+    "dev": "concurrently -k \"npm run dev:vite\" \"wait-on http://localhost:5173 && npm run dev:electron\"",
+    "build:vite": "tsc -b && vite build",
+    "build:backend": "cd ../backend && go build -o ../frontend/backend-cache/integritypos-api.exe ./cmd/api",
+    "build:all": "npm run build:vite && npm run build:backend && electron-builder --win",
+    "build:portable": "npm run build:vite && npm run build:backend && electron-builder --win portable",
+    "lint": "tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "build": {
+    "appId": "com.integritypos.app",
+    "productName": "IntegrityPOS",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "main.js",
+      "preload.js"
+    ],
+    "extraResources": [
+      {
+        "from": "backend-cache/",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "icon": "public/icon.ico",
+      "signAndEditExecutable": false
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "IntegrityPOS",
+      "installerIcon": "public/icon.ico",
+      "uninstallerIcon": "public/icon.ico",
+      "installerHeaderIcon": "public/icon.ico"
+    },
+    "portable": {
+      "artifactName": "IntegrityPOS-${version}-portable.${ext}"
+    }
+  },
+  "dependencies": {
+    "axios": "^1.7.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.15.0",
+    "sonner": "^2.0.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "concurrently": "^9.1.2",
+    "electron": "^35.1.2",
+    "electron-builder": "^26.0.12",
+    "tailwindcss": "^4.0.0",
+    "typescript": "~5.7.0",
+    "vite": "^6.0.0",
+    "wait-on": "^8.0.3"
+  }
+}

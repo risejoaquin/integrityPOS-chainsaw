@@ -1,0 +1,34 @@
+directories:
+  output: release
+  buildResources: build
+appId: com.integritypos.app
+productName: IntegrityPOS
+files:
+  - filter:
+      - dist/**/*
+      - main.js
+      - preload.js
+extraResources:
+  - from: backend-cache/
+    to: backend
+    filter:
+      - '**/*'
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: public/icon.ico
+  signAndEditExecutable: false
+nsis:
+  oneClick: false
+  allowToChangeInstallationDirectory: true
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: IntegrityPOS
+  installerIcon: public/icon.ico
+  uninstallerIcon: public/icon.ico
+  installerHeaderIcon: public/icon.ico
+portable:
+  artifactName: IntegrityPOS-${version}-portable.${ext}
+electronVersion: 35.7.5

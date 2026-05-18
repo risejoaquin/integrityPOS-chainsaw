@@ -1,0 +1,7 @@
+integrityPOS commands:
+comandos para correr:
+
+frontend npm run dev:vite
+backend go run ./cmd/api
+
+
