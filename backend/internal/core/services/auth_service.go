@@ -36,35 +36,35 @@ type CustomClaims struct {
 
 // Authenticate authenticates a user and returns a JWT token
 func (s *AuthService) Authenticate(ctx context.Context, username, password string) (string, error) {
-	// Validate input
+	_, token, err := s.AuthenticateFull(ctx, username, password)
+	return token, err
+}
+
+// AuthenticateFull authenticates a user and returns user data + JWT token
+func (s *AuthService) AuthenticateFull(ctx context.Context, username, password string) (*domain.User, string, error) {
 	if username == "" || password == "" {
-		return "", fmt.Errorf("username and password are required")
+		return nil, "", fmt.Errorf("username and password are required")
 	}
 
-	// Get user from repository
 	user, err := s.userRepo.GetByUsername(ctx, username)
 	if err != nil {
-		// Don't reveal if user exists (security)
-		return "", fmt.Errorf("invalid credentials")
+		return nil, "", fmt.Errorf("invalid credentials")
 	}
 
-	// Check if user is active
 	if !user.Active {
-		return "", fmt.Errorf("user account is disabled")
+		return nil, "", fmt.Errorf("user account is disabled")
 	}
 
-	// Verify password
 	if err := bcrypt.CompareHashAndPassword([]byte(user.PasswordHash), []byte(password)); err != nil {
-		return "", fmt.Errorf("invalid credentials")
+		return nil, "", fmt.Errorf("invalid credentials")
 	}
 
-	// Generate token
 	token, err := s.generateToken(user)
 	if err != nil {
-		return "", fmt.Errorf("failed to generate token: %w", err)
+		return nil, "", fmt.Errorf("failed to generate token: %w", err)
 	}
 
-	return token, nil
+	return user, token, nil
 }
 
 // ValidateToken validates and decodes a JWT token, returns userID

@@ -28,9 +28,9 @@ type LoginRequest struct {
 
 // LoginResponse represents the login response
 type LoginResponse struct {
-	AccessToken string      `json:"access_token"`
-	TokenType   string      `json:"token_type"`
-	ExpiresIn   int         `json:"expires_in"`
+	AccessToken string       `json:"access_token"`
+	TokenType   string       `json:"token_type"`
+	ExpiresIn   int          `json:"expires_in"`
 	User        UserResponse `json:"user"`
 }
 
@@ -46,35 +46,27 @@ type UserResponse struct {
 func (h *AuthHandler) Login(c *gin.Context) {
 	var req LoginRequest
 
-	// Bind JSON request
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(400, gin.H{
-			"error":   "validation_error",
-			"message": fmt.Sprintf("Invalid request: %v", err),
-		})
+		c.JSON(400, gin.H{"error": "validation_error", "message": fmt.Sprintf("Invalid request: %v", err)})
 		return
 	}
 
-	// Authenticate user
-	token, err := h.authService.Authenticate(c.Request.Context(), req.Username, req.Password)
+	// Authenticate and get token + user data
+	userData, token, err := h.authService.AuthenticateFull(c.Request.Context(), req.Username, req.Password)
 	if err != nil {
-		c.JSON(401, gin.H{
-			"error":   "invalid_credentials",
-			"message": "Username or password is incorrect",
-		})
+		c.JSON(401, gin.H{"error": "invalid_credentials", "message": "Username or password is incorrect"})
 		return
 	}
-
-	// TODO: Get full user info for response (currently requires another query)
-	// This should be refactored to return user info from Authenticate
 
 	response := LoginResponse{
 		AccessToken: token,
 		TokenType:   "Bearer",
-		ExpiresIn:   86400, // 24 hours in seconds
+		ExpiresIn:   86400,
 		User: UserResponse{
-			Username: req.Username,
-			// ID, Email, Role would be populated from actual user fetch
+			ID:       userData.ID,
+			Username: userData.Username,
+			Email:    userData.Email,
+			Role:     userData.Role,
 		},
 	}
 

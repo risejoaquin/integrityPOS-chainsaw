@@ -72,3 +72,13 @@ __pycache__/
 
 # Windows specific
 Thumbs.db
+
+# Backend build outputs
+backend/integritypos-api.exe
+backend/integritypos-api
+
+# Frontend build outputs
+frontend/dist/
+frontend/backend-cache/
+frontend/release/
+node_modules/

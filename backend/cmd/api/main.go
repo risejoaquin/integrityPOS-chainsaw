@@ -134,6 +134,7 @@ func main() {
 	// ============================================================
 	log.Println("Initializing HTTP handlers...")
 
+	userHandler := handlers.NewUserHandler(userRepo)
 	cashHandler := handlers.NewCashHandler(shiftService)
 	reportsHandler := handlers.NewReportsHandler(db.GetDB())
 	authHandler := handlers.NewAuthHandler(authService)
@@ -199,6 +200,11 @@ func main() {
 		protected.GET("/sales", salesHandler.ListSales)
 		protected.POST("/sales", salesHandler.CreateSale)
 		protected.POST("/sales/:id/void", salesHandler.VoidSale)
+
+		// User management (admin)
+		protected.GET("/users", userHandler.ListUsers)
+		protected.POST("/users", userHandler.CreateUser)
+		protected.POST("/users/:id/toggle", userHandler.ToggleUser)
 
 		// Cash / Expense endpoints
 		protected.POST("/cash/out", cashHandler.CashOut)
